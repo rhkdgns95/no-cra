@@ -7,14 +7,14 @@ const webpack = require('webpack');
 module.exports = {
   mode: 'development',   // production OR development
   entry: {  // 파일을 묶기위해서 Webpack이 바라보는 파일 시점
-    main: './src/index.js'  
+    main: './src/index.tsx'  
   },
   output: {  // bundle된 파일의 결과물을 위한 설정
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'build')
   },
   resolve: {  // import될 수 있는 파일 확장자 명
-    extensions: ["*", ".js", ".jsx"]
+    extensions: ["*", ".js", ".jsx", ".ts", ".tsx"]
   },
   module: {
     rules: [
@@ -40,10 +40,11 @@ module.exports = {
         ]
       },
       {
-        test: /\.(js|jsx)$/,
-        use: {
-          loader: 'babel-loader'
-        }
+        test: /\.(js|jsx|ts|tsx)$/,
+        exclude: /node_modules/,
+        use: [
+          'babel-loader'
+        ]
       }
     ]
   },
