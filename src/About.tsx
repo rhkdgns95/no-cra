@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
+import('./msg' as any).then(function (module) {
+  console.log(module.msg.hello);
+});
+
 interface IProps {
   name: string;
   title: string;
@@ -9,7 +13,7 @@ const About: React.FC<IProps> = ({
   title
 }) => {
   const [appName, setAppName] = useState<string>("");
-  const [appTitle, setAppTitle] = useState<string>();
+  const [appTitle, setAppTitle] = useState<string>("");
 
   useEffect(() => {
     setAppName("TS | " + name);

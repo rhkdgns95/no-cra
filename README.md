@@ -1,3 +1,4 @@
+# No CRA React
 [참고자료](https://velog.io/@yesdoing/%EB%82%B4%EB%A7%98%EB%8C%80%EB%A1%9C-%EB%A6%AC%EC%95%A1%ED%8A%B8-A-to-Z-1-9pjwz1o6ai#getting-started)
 
 
@@ -11,9 +12,9 @@
 - Live Dev Server
 
 
-# 1. CRA없이 React환경 구성 (webpack 사용)
+## 1. CRA없이 React환경 구성 (webpack 사용)
 
-## JOB
+### JOB
 1. mkdir src public
 2. yarn init
 3. yarn add -D webpack webpack-cli
@@ -213,9 +214,9 @@ module.exports = {
 15. Bug
 - yarn add -D node-sass를 설치해야 스타일 적용이 완료됨.
 
-# 2. CRA없이 React환경 구성 (webpack 사용 + Typescript 적용)
+## 2. CRA없이 React환경 구성 (webpack 사용 + Typescript 적용)
 
-## JOB
+### JOB
 1. Typescript 설치
 - 설치
 > yarn add -D @types/react @types/react-dom typescript
@@ -250,4 +251,78 @@ module.exports = {
   }
 }
 ```
-# 3. CRA없이 React환경 구성 (webpack 사용 X, Parcel 사용)
+## 3. CRA없이 React환경 구성 (webpack 사용 X, Parcel 사용)
+
+### Install + Settings
+> yarn add parcel-bundler 설치
+[package.json]
+```
+{
+  "scripts": {
+    "dev": "parcel ./public/index.html",
+    "build": "parcel build ./public/index.html"
+  }
+}
+```
+
+### JOB
+1. 에셋 트리 구성
+> Parcel은 하나의 진입 애셋을 입력으로 받음.
+> 진입 애셋은 어느유형이라도 가능(JS, HTML, CSS, 이미지 등)
+> 다양한 유형이 Parcel에 정의되어있으며, 각 유형이 어떻게 다루어 주어야 하는지 알 수 있음.
+> 애셋이 분석(parse)되면, 애셋의 의존요소가 추출되고, 최종적인 컴파일 형태로 변환됨(이것이 애셋 트리를 만듬)
+
+2. 번들 트리 구성
+> 일단 애셋트리가 만들어지면, 애셋은 번들 트리 안에 놓이게 됨.
+> 진입 애셋을 위한 번들이 만들어지고, 코드분할을 발생시키는 다이나믹 import()를 위한 하위 번들이 만들어 짐.
+> 형제 번들은 다른 유형의 애셋이 임포트 될 때 만들어 짐(예를들어, CSS파일을 Javascript에서 임포트 하는경우, 대응하는 Javascript에 대한 형제번들 안에 위치함) -> css파일을 js파일에서 불러오면, Js파일의 형제 번들안에 CSS가 위치함.
+> 만약 하나 이상의 번들에서 애셋이 필요하게 되면, 번들 트리내의 가장 가까운 공통조상 번들로 끌어 올려짐(이로써 중복 포함되는일을 해결함.) -> 예를들어, components/test1.js와 components/test2.js에서 공통적으로 test.css가 필요하다면, test1과 test2의 공통적인 부모 요소에서 어셋파일 test.css을 끌어와서 되는일이 없다.
+
+3. 패키징
+> 번들 트리가 만들어지고 나면, 각 번들은 패키저(packager)에 의해 특정 유형의 파일로 작성.
+> 브라우저로 로드되는 최종파일 안에서 각 애셋이 어떻게 합쳐져야 하는지 패키저는 알고 있음.
+
+- 정리
+> Webpack이나 Gulp와 다르게 별도 설정없어도 빠르게 빌드가 가능함.
+> 빌드를 위해 번들러를 학습하는 시간을 줄임.
+> 애셋트리 구성(js,html,css파일을 각 유형으로 분리하고 의존요소를 추출) -> 번들 트리 구성(불러오는 asset파일들의 중복을 피하도록 함) ->  패키징(브라우저로 로드되는 최종파일안에서 각 애셋이 합쳐짐)
+> 별도의 설정없이 진입파일(Entry File)만 지정하면 바로 빌드
+```
+parcel index.html
+```
+> 빠른 번들속도: 멀티코어 컴파일이 가능하며, 재시작을 하더라도 캐시를 이용하여 빠르게 리빌드(Rebuild)를 할 수 있음.
+```
+첫번째 빌드속도: 4.21초 -> 재시작 후 빌드속도: 0.769초   // 캐시를 이용하여 처음실행보다 훨씬 빠름
+```
+> Asset(애셋) 기반 번들링
+```
+1. HTML, CSS, Javscript같은 특정 유형의 애셋을 지원함.
+2. 비슷한 유형의 애셋은 같은 번들로 출력하고 다른 유형의 애셋은 자식 번들로 만들어 부모 번들에 참조함.
+3. 예를들어서 'main.js'파일에서 Scss파일을 가져오기( import './scss/main.scss' )했다면 다른 번들(.js파일과 .css 파일)로 만들어지고 참조를 남김.
+```
+> 자동 변환
+```
+가장 많이 사용하는 Babel, PostCSS(특히 Autoprefixer)같은 트랜스파일러들을 내장하여 지원함.
+모듈안에 .babelrc, .postcssrc 같은 설정 파일들을 발견하면, 자동으로 변환함.
+```
+> HTML(Hot Module Replacement): 런타임 중 페이지를 새로고침 하지않고도 모듈을 자동 업데이트하는 HMR(Hot Module Replacement)이 내장되어 있으며, 자동업데이트가 실패하면, 새로고침함.
+> 설정없이 코드 분할(Spliting)
+```
+// Dynamic import -> 함수 import()를 사용하면 코드를 분할(Spliting)하여 빌드함.
+// 이는 require(), import와 비슷하게 사용하며, Promise를 반환함.
+// 즉, 모듈을 비동기로 로드할 수 있음.
+
+// msg.js
+export const msg = {
+  hello: 'Hello Parcel Dynamic import!!!'
+};
+
+// main.js
+import ('./msg')
+  .then(function (module) {
+    console.log(module.msg.hello);
+  }); // 'Hello Parcel Dynamic import!!'
+
+// 위와같이 함수를 사용하면 파일이 분할됨.
+// main.js의 번들과 msg.js의 번들
+```

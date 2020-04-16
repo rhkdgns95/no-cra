@@ -17,6 +17,7 @@
     "html-webpack-plugin": "^4.2.0",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.13.1",
+    "parcel-bundler": "^1.12.4",
     "sass-loader": "^8.0.2",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
@@ -24,8 +25,9 @@
     "webpack-dev-server": "^3.10.3"
   },
   "scripts": {
-    "build": "webpack --mode production",
-    "start": "webpack-dev-server"
+    "dev":  "parcel ./public/index.html",
+    "build" : "parcel build ./public/index.html"
+    
   },
   "dependencies": {
     "react": "^16.13.1",
