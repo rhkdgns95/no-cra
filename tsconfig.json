@@ -18,9 +18,9 @@
       "noEmit": true,
       "allowSyntheticDefaultImports": true,
       "suppressImplicitAnyIndexErrors": true,
-      "rootDir": "src",
+      "rootDir": "src"
   },
   "include": [
-      "src"
+      "src/**/*"
   ]
 }

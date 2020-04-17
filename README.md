@@ -326,3 +326,31 @@ import ('./msg')
 // 위와같이 함수를 사용하면 파일이 분할됨.
 // main.js의 번들과 msg.js의 번들
 ```
+
+
+## 4. Study
+### parcel CMD [참고](https://trustyoo86.github.io/parcel/2018/02/19/parcel-command.html)
+````
+## 3000번 포트로 시작(default: 1234)
+parcel -p 3000 ./index.html // parcel --port 3000 ./index.html   
+
+## watch server에서 HotMoudleReplacement를 지원하며 socket의 포트번호 설정(default: random)
+parcel --hmr-port 3000 ./index.html
+
+## https 지원
+parcel --https ./index.html
+
+## Asset들의 번들링이 끝나고 난 뒤, 자동으로 OS에 설정된 default browser를 연다(open)
+parcel ./index.html --open
+
+## no-cache(default는 활성화 상태로 해당옵션을 사용하면, .cache폴더에 캐싱하지 않도록 설정가능)
+parcel ./index.html --no-cache
+````
+### 내용
+- 여러 컴포넌트의 css를 불러온 경우
+> 전체 컴포넌트가 적용이 되어 해당 컴포넌트만 부모에 포함시키는 방법을 찾아봐야 함.
+> 즉, 불러온 css파일들을 하나의 css로 묶어서 호출됨.
+> 우선순위는 마지막에 호출된 스타일이 1순위임(막내 컴포넌트)
+
+- public 이미지 적용
+> 이전과 같이 public image는 /로 호출하는게 아니라, 해당 컴포넌트의 상대 Path로 불러와서 import 하도록 하면 됨.

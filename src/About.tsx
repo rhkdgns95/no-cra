@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Card from './Components/Card/Card';
+import Label from './Components/Label/Label';
 
 import('./msg' as any).then(function (module) {
   console.log(module.msg.hello);
@@ -14,10 +16,17 @@ const About: React.FC<IProps> = ({
 }) => {
   const [appName, setAppName] = useState<string>("");
   const [appTitle, setAppTitle] = useState<string>("");
-
+  const [firstMounted, setFirstMounted] = useState<boolean>(false);
+  const [secondMounted, setSecondMounted] = useState<boolean>(false);
   useEffect(() => {
     setAppName("TS | " + name);
     setAppTitle("TS | " + title);
+    setTimeout(() => {
+      setFirstMounted(true)
+    }, 2000);
+    setTimeout(() => {
+      setSecondMounted(true);
+    }, 4000);
   }, []);
 
   useEffect(() => {
@@ -31,6 +40,8 @@ const About: React.FC<IProps> = ({
       <h1>Hello About</h1>
       <p>{appName}</p>    
       <p>{appTitle}</p>    
+      { firstMounted &&  <Card /> }
+      { secondMounted && <Label /> }
     </>
   );
 }

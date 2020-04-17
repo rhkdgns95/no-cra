@@ -24,13 +24,12 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
   },
-  "scripts": {
-    "dev":  "parcel ./public/index.html",
-    "build" : "parcel build ./public/index.html"
-    
-  },
   "dependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
+  },
+  "scripts": {
+    "start":  "parcel -p 3000 ./src/index.html --open",
+    "build" : "parcel build ./src/index.html"
   }
 }
