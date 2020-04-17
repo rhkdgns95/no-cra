@@ -354,3 +354,228 @@ parcel ./index.html --no-cache
 
 - public 이미지 적용
 > 이전과 같이 public image는 /로 호출하는게 아니라, 해당 컴포넌트의 상대 Path로 불러와서 import 하도록 하면 됨.
+
+## 5. Test
+- [참고](https://rinae.dev/posts/react-testing-tutorial-kr)
+
+### Install
+- mocha: 앱에서 모든 테스트를 실행시키는 역할을 맡는 실행기.
+- chai: 단언을 작성하기 위해 사용되는 요소("X는 Y와 같아야한다"라고 알려주는 요소가 필요)
+> yarn add -D mocha
+> yarn add -D chai
+> yarn add @babel/register
+
+- jsdom: DOM을 테스트하기 위한 가상의 브라우저 환경을 만들어 주기 위함.
+- React컴포넌트를 테스트 할 때, 가상의 브라우저 환경을 만들어주어야 할 필요가있음(컴포넌트들은 실제로 HTML로 그려지면서 브라우저의 DOM이 되니깐.)
+- 하지만, 테스트코드는 실제 브라우저에서 실행되지 않기 때문에 컴포넌트를 직접 테스트하기 위한 최소한의 환경을 갖추어야 함.
+> yarn add -D jsdom
+
+### Mocha와 Chai테스트 설정 및 리액트 State변경을 단위 테스팅.
+1. src폴더와 같은 레벨에 test폴더와 그안에 설정파일을 생성함.
+- 커맨드 라인에서 테스트 스크립트를 실행할 때 환경설정하는데 사용되는 것들.
+[/]
+```
+mkdir test 
+cd test
+touch helper.js dom.js
+```
+2. test/helper.js파일
+[/test/helper.js]
+```
+import { expect } from 'chai';
+
+global.expect = expect;
+```
+- 기껏한 것은 expect함수를 Chai에서 가져와서 할당해둔 것.
+- 이 함수는 나중에 테스트할 때, "X는 Y와 같아야한다"는 단언을 작성할 때, 사용함.
+- 더 나아가 expect함수는 이 파일을 사용하는 모든 테스트 파일의 전역함수로 할당됨.
+- 그러면 매번 expect함수를 직접 가져오지 않아도 바로 사용할 수 있게 됨.
+- 이외에도 더많은 함수를 테스트용 전역함수로 추가할 것이다.
+
+3. test/dom.js파일
+- 가짜 브라우저를 설정해서 리액트 컴포넌트가 HTML로 그려지도록 설정하기.
+[/test/dom.js]
+```
+import { JSDOM } from 'jsdom';
+
+const { window } = new JSDOM(`<!doctype html><html><body></body></html>`);
+
+function copyProps(src, target) {
+  const props = Object.getOwnPropertyNames(src)
+    .filter(prop => typeof target[prop] === "undefined")
+    .reduce((result, prop) => ({
+      ...result,
+      [prop]: Object.getOwnPropertyDescriptor(src, prop)
+    }), {});
+  Object.defineProperties(target, props);
+};
+
+global.window = window;
+global.document = window.document;
+global.navigator = {
+  userAgent: 'node.js'
+};
+
+copyProps(window, global);
+```
+- jsdom 라이브러리가 브라우저에 사용되는 window객체를 만듬
+- 또한 document객체도 추가함.
+- 이제 헬퍼 파일이 모두 준비되었음.
+- 하나는 테스트 파일 전체에서 사용되는 함수를 전역함수로 만드는 파일(helper.js)
+- 나머지 하나는 리액트 컴포넌트를 테스트할때 DOM을 흉내내는 설정파일(dom.js)
+
+4. 테스트를 위한 스크립트를 package.json에 작성
+[package.json]
+```
+// 테스트 설정파일을 require문으로 가져오고 *.spec.js라는 형태로 되어있는 파일을 모두 실행.
+"script": {
+  "test:unit": "mocha --require @babel/register --require ./test/helper.js --require ./test/dom.js 'src/**/*.spec.js'"
+}
+```
+- 기본적으로 테스트 파일이름은 App.spec.js처럼 되어있고 src폴더 아래라면, 어디든지 상관없음.
+- 물론 파일이름이나 폴더위치 등의 규칙은 정하기 나름임.
+- 테스트 스크립트는 npm run test:unit으로 실행할 수 있지만, 지금은 아무런 파일이 없기때문에 테스트 파일을 찾을 수 없다고 뜸.
+[package.json 관찰 모드]
+```
+"script": {
+  "test:unit": "mocha --require @babel/register --require ./test/helper.js --require ./test/dom.js 'src/**/*.spec.js'"
+  "test:unit:watch": "npm run test:unit -- --watch"
+}
+```
+- 관찰 모드에서는 테스트가 한 번 실행되고 난 뒤 유지되다가 소스코드나 테스트에 변경이 일어나면 바로 다시 실행됨.
+- npm run test:unit:watch로 관찰모드를 실행하면서 개발서버를 작동하려면 터미널 탭을 양쪽에서 두개 띄우도록 함.
+5. Mocha와 Chai로 테스트하기 전 ignore-styles 설치
+- install
+> yarn add -D ignore-styles
+- 나중에 개발하면서 React컴포넌트에 CSS스타일을 적용하게 되지만, 테스트에서는 스타일이 필요없으므로 무시하고 싶을때 사용됨.
+[package.json]
+```
+"scripts": {
+  ...,
+  "test:unit": "mocha --require bable-core/register --require ./test/helper.js --require ./test/dom.js --require ignore-styles 'src/**/*.spec.js'",
+  "test:unit:watch": "npm run test:unit -- --watch"
+}
+```
+6. 리액트 State변경을 위한 단위 테스트 진행
+- 테스팅 피라미드의 벽돌 하나하나에 해당하는 '단위 테스트'를 만들어 보도록 하자.
+- 단위 테스트는 앱의 작은 부분을 독립적으로 테스트 함.
+- 보통 입력값을 받아 출력값으로 돌려주는 함수들이 테스트 대상이 됨.
+- 이때 순수 함수가 빛을 발함.
+- 함수를 실행하면서 생기는 부수효과를 걱정할 필요가 전혀 없으므로 순수 함수를 실행할 때, 입력값이 같다면 출력값은 언제나 동일함.
+- 따라서 단위 테스트로 앱의 특정 동작을 확인할 수 있음.
+- 이미 Add 컴포넌트의 state안에 동작하는 상태변경 함수들을 작은 함수로 나누어 뺴두었음.
+- 그리고 파일에서 내보내두었으니(export), 테스트 파일에서 불러와서 (import) 실행하면 됨.
+- Add 컴포넌트 테스트를 위한 Add.spec.js를 만들자. (적절한 접미사로 .sepc .test로 붙임)
+
+7. Add.spect.js작성
+8. npm run test:unit 입력
+9. 확인하기.
+```
+// 옵션 -r == --require
+yarn mocha -r @babel/register -r ts-node/register -r ./test/helpers.js -r ./test/dom.js ./src/Components/Add/Add.spec.js
+
+// 같은표현
+yarn mocha -r @babel/register -r ts-node/register -r ./test/*.js ./src/**/*.spec.*
+
+```
+10. 주의점
+- babel파일 추가: -r @babel/register
+- typescript 컴파일: -r ts-node/register
+[package.json]
+```
+{
+  "scripts: " {
+    ...,
+    "test:unit": "mocha -r @babel/register -r ts-node/register -r ./test/helpers.js -r ./test/dom.js ./src/**/*.spec.*",
+    "test:unit:watch": "npm run test:unit -- --watch"
+  }
+}
+```
+- yarn test:unit:watch를 통해서, (it)테스트 케이스가 변경될 때마다 확인이 가능.
+
+### 리액트에 Enzyme 테스트 설정
+- Enzyme는 손쉽게 리액트 컴포넌트 단위 테스트와 통합테스트를 하기 위한 설정을 해보자.
+1. 개발 의존성 Enzyme 설치, Enzyme에 리액트 버전을 맞춘 어댑터 설치
+- yarn add -D enzyme
+- yarn add enzyme-adapter-react-16
+
+2. test/handler.js파일에 Enzyme설정
+```
+import { expect } from 'chai';
+import { mount, render, shallow, configure } from "enzyme";
+import Adapter from "enzyme-adapter-react-16";
+
+configure({ adapter: new Adapter() });
+
+global.expect = expect;
+
+global.mount = mount;
+global.render = render;
+global.shallow = shallow;
+```
+- global.expect나 global.mount로 작성하는 이유? 
+> 함수를 전역으로 만들어서 테스트파일에서 일일이 이 함수들을 불러올 필요가 없어지게 됨. 
+> 앞으로 리낵트 컴포넌트 단위 테스트나 통합 테스트할 때, 이 함수들을 사용하게 됨.
+
+### Enzyme으로 리액트 테스트하기 - 리액트 컴포넌트를 단위, 통합 테스트하는 방법
+- Enzyme 설정완료 후, 컴포넌트 테스트를 할 수 있는 몇가지 기본 패턴을 살펴보자.
+
+1. Add컴포넌트가 랜더링할때, Add컴포넌트에서 호출한 Counter컴포넌트도 함께 랜더링이 되는지 확인해보자.
+[Add.spec.js]
+```
+import { Add, Counter } from "./Add";
+describe("컴포넌트 렌더링 확인", () => {  // 테스트 묶음
+  it("Add컴포넌트 안에서 Counter 컴포넌트가 렌더링 됨.", () => {  // 테스트 케이스를 정의
+    const wrapper = shallow(<Add />); 
+    wrapper.find(<Counter/>).to.have.length(1); // Add컴포넌트 자손으로 Counter 컴포넌트를 갖는지?
+  });
+});
+```
+- const wrapper = shallow(<Add/>)는 Add컴포넌트가 가진 컴포넌트들의 숫자임.(최상위 컴포넌트가 <></> 인경우 +1을 해야함)
+1-2) 컴포넌트의 갯수확인.
+[Test.tsx]
+```
+<>
+  <h1></h1>
+  <p></p>
+  <div>
+    <span></span>
+    <span></span>
+  </div>
+<>
+```
+[Test.spec.js]
+```
+import React from "react";
+import Test from "./Test";
+
+describe("Test Component", () => {
+  it("Test Component에 선언된 컴포넌트의 수", () => {
+    const wrapper = shallow(<Test/>);
+    expect(wrapper.find("*")).to.have.length(6)
+  });
+});
+```
+- 테스트결과: <></>까지 포함하여 총 6개가 맞음.
+
+
+2. List 컴포넌트 안에 li태그와 list클래스를 갖는지 확인.
+```
+import { List } from "./List";
+
+describe("List Component" => {  // 테스트 묶음
+  it("List Wrapper가 li엘리먼트를 갖는다", () => {  // 테스트 케이스
+    const wrapper = shallow(<List />);
+    expect(wrapper.find('li')).to.have.length(2); // List가 자손인 li엘리먼트 2개를 갖는지?
+    expect(wrapper.find('.li)).to.have.length(1); // List가 자손인 클래스명이 .li인 엘리먼트를 갖는지?
+  });
+});
+
+```
+
+
+<!-- ## 6. ESLint
+- yarn add eslint-plugin-react-hooks -D
+- yarn add eslint-config-prettier eslint-plugin-prettier -D
+- yarn add eslint exlint-plugin-react -->
+

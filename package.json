@@ -8,28 +8,40 @@
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
+    "@babel/register": "^7.9.0",
+    "@types/mocha": "^7.0.2",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
     "babel-loader": "^8.1.0",
+    "chai": "^4.2.0",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.5.2",
+    "enzyme": "^3.11.0",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.2.0",
+    "ignore-styles": "^5.0.1",
+    "jsdom": "^16.2.2",
     "mini-css-extract-plugin": "^0.9.0",
+    "mocha": "6.2.2",
     "node-sass": "^4.13.1",
     "parcel-bundler": "^1.12.4",
     "sass-loader": "^8.0.2",
+    "ts-node": "^8.8.2",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "enzyme-adapter-react-16": "^1.15.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
   "scripts": {
-    "start":  "parcel -p 3000 ./src/index.html --open",
-    "build" : "parcel build ./src/index.html"
+    "test": "mocha",
+    "start": "parcel -p 3000 ./src/index.html --open",
+    "build": "parcel build ./src/index.html",
+    "test:unit": "mocha -r @babel/register -r ts-node/register -r ./test/dom.js -r ./test/helpers ./src/**/*.spec.*",
+    "test:unit:watch": "npm run test:unit -- --watch"
   }
 }

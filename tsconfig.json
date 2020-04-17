@@ -18,8 +18,13 @@
       "noEmit": true,
       "allowSyntheticDefaultImports": true,
       "suppressImplicitAnyIndexErrors": true,
-      "rootDir": "src"
+      "noUnusedLocals": true,
+      "rootDir": "src",
+
   },
+  "exclude": [
+    "node_modules"
+  ],
   "include": [
       "src/**/*"
   ]
