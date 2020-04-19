@@ -1,30 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export const Increment = (number: number) => number + 1;
-export const Decrement = (number: number) => number - 1;
-
-const Add = () => {
-  const [number, setNumber] = useState<number>(0);
-
-  return (
-    <div>
-      <h5>현재 값: { number }</h5>
-      <Counter setNumber={setNumber} />
-    </div>
-  );
+interface IAddProps {
+	name: string;
+	title: string;
 }
 
-export const Counter = ({
-  setNumber
-}: any) => (
-  <div>
-  <button onClick={() => setNumber((prevState: number) => Increment(prevState))}>
-    증가
-  </button>
-  <button onClick={() => setNumber((prevState: number) => Decrement(prevState))}>
-    감소
-  </button>
-  </div>
-)
+interface ICounterProps {
+	setNumber: Function;
+}
+
+export const Increment = (num: number): number => num + 1;
+export const Decrement = (num: number): number => num - 1;
+
+export const useMounted = (initValue: boolean): { mount: boolean } => {
+	const [mount, setMount] = useState<boolean>(initValue);
+
+	useEffect(() => {
+		setMount(!initValue);
+	}, [initValue]);
+
+	return {
+		mount,
+	};
+};
+
+export const useInput = (
+	initValue: string
+): { value: string; onChange: (event: React.ChangeEvent<HTMLInputElement>) => void } => {
+	const [value, setValue] = useState<string>(initValue);
+
+	const onChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+		const {
+			target: { value: newValue },
+		} = event;
+		setValue(newValue);
+	};
+
+	return {
+		value,
+		onChange,
+	};
+};
+
+const Add: React.FC<IAddProps> = ({ name, title }: IAddProps) => {
+	const myName = useInput(name);
+	const myTitle = useInput(title);
+	const [number, setNumber] = useState<number>(0);
+
+	return (
+		<div>
+			<h5>현재 값: {number}</h5>
+			<p>{myName.value}</p>
+			<p>{myTitle.value}</p>
+			<Counter setNumber={setNumber} />
+		</div>
+	);
+};
+
+export const Counter: React.FC<ICounterProps> = ({ setNumber }: ICounterProps) => (
+	<div>
+		<button type="button" onClick={(): Function => setNumber((prevState: number) => Increment(prevState))}>
+			증가
+		</button>
+		<button type="button" onClick={(): Function => setNumber((prevState: number) => Decrement(prevState))}>
+			감소
+		</button>
+	</div>
+);
 
 export default Add;

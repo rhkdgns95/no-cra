@@ -3,51 +3,56 @@ import React, { useState, useEffect } from 'react';
 // import Label from './Components/Label/Label';
 import Add from './Components/Add/Add';
 
-import('./msg' as any).then(function (module) {
-  console.log(module.msg.hello);
+// Unexpected any. Specify a different type.eslint@typescript-eslint/no-explicit-any
+/* eslint-disable */
+import('./msg' as any).then((module) => {
+	console.log(module.msg.hello);
 });
+/* eslint-enable */
 
 interface IProps {
-  name: string;
-  title: string;
+	name: string;
+	title: string;
 }
-const About: React.FC<IProps> = ({
-  name,
-  title
-}) => {
-  const [appName, setAppName] = useState<string>("");
-  const [appTitle, setAppTitle] = useState<string>("");
-  const [firstMounted, setFirstMounted] = useState<boolean>(false);
-  const [secondMounted, setSecondMounted] = useState<boolean>(false);
-  
-  console.log("About.tsx - firstMounted: ", firstMounted);
-  console.log("About.tsx - secondMounted: ", secondMounted);
 
-  useEffect(() => {
-    setAppName("TS | " + name);
-    setAppTitle("TS | " + title);
-    setTimeout(() => {
-      setFirstMounted(true)
-    }, 2000);
-    setTimeout(() => {
-      setSecondMounted(true);
-    }, 4000);
-  }, []);
+const About: React.FC<IProps> = ({ name, title }: IProps) => {
+	const [appName, setAppName] = useState<string>('');
+	const [appTitle, setAppTitle] = useState<string>('');
+	const [firstMounted, setFirstMounted] = useState<boolean>(false);
+	const [secondMounted, setSecondMounted] = useState<boolean>(false);
 
-  useEffect(() => {
-    if(appTitle.length > 0) {
-      window.document.title = appTitle;
-    }
-  }, [appTitle]);
+	const info = {
+		name: appName,
+		title: appTitle,
+	};
+	console.log('About.tsx - firstMounted: ', firstMounted);
+	console.log('About.tsx - secondMounted: ', secondMounted);
 
-  return (
-    <>
-      <h1>Hello About</h1>
-      <p>{appName}</p>    
-      <p>{appTitle}</p>    
-      <Add />
-    </>
-  );
-}
+	useEffect(() => {
+		setAppName(`TS | ${name}`);
+		setAppTitle(`TS | ${title}`);
+		setTimeout(() => {
+			setFirstMounted(true);
+		}, 2000);
+		setTimeout(() => {
+			setSecondMounted(true);
+		}, 4000);
+	}, [name, title]);
+
+	useEffect(() => {
+		if (appTitle.length > 0) {
+			window.document.title = appTitle;
+		}
+	}, [appTitle]);
+
+	return (
+		<>
+			<h1>Hello About</h1>
+			<p>{appName}</p>
+			<p>{appTitle}</p>
+			<Add {...info} />
+		</>
+	);
+};
 
 export default About;

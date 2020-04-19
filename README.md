@@ -1,5 +1,11 @@
 # No CRA React
-[참고자료](https://velog.io/@yesdoing/%EB%82%B4%EB%A7%98%EB%8C%80%EB%A1%9C-%EB%A6%AC%EC%95%A1%ED%8A%B8-A-to-Z-1-9pjwz1o6ai#getting-started)
+[parcel 참고자료](https://velog.io/@yesdoing/%EB%82%B4%EB%A7%98%EB%8C%80%EB%A1%9C-%EB%A6%AC%EC%95%A1%ED%8A%B8-A-to-Z-1-9pjwz1o6ai#getting-started)
+[mocha](https://mochajs.org/)
+[mocha, chai, enz.... 참고자료 - 1](https://rinae.dev/posts/react-testing-tutorial-kr)
+[mocha, chai, enz.... 참고자료 - 2](https://www.robinwieruch.de/react-testing-tutorial/)
+[baretest](https://github.com/volument/baretest)
+[custom hook 테스팅 참고자료 - 1](https://github.com/flexdinesh/testing-hooks)
+[custom hook 테스팅 참고자료 - 2](https://dev.to/flexdinesh/react-hooks-test-custom-hooks-with-enzyme-40ib)
 
 
 필수사항
@@ -573,9 +579,241 @@ describe("List Component" => {  // 테스트 묶음
 
 ```
 
+3. (함수형)컴포넌트의 Props를 확인
+[About.spec.js]
+```
+import React
+// (HookWrapper)임의의 함수형 컴포넌트를 만들어 생성. 
+const HookWrapper = (props) => {
+  const hook = props.hook ? props.hook() : undefined;
+  return <div hook={hook}/>
+}
 
-<!-- ## 6. ESLint
-- yarn add eslint-plugin-react-hooks -D
-- yarn add eslint-config-prettier eslint-plugin-prettier -D
-- yarn add eslint exlint-plugin-react -->
+// 테스팅 블록생성
+describe("Add Component", () => {
+  // 테스팅 케이스 1: Add컴포넌트 존재여부 확인.
+  it("exist", () => {
+    const wrapper = shallow(<HookWrapper hook={() => <Add />}/>);
+    expect(wrapper).to.exist;
+  });
 
+  it("입력 1.", () => {
+    const wrapper = shallow(<HookWrapper hook={() => <Add name="" title="" />}/>);
+    const { hook } = wrapper.find('div').props();
+    const { name, title } = hook;
+    expect(name).to.equal("");  // "" 입력 확인
+    expect(title).to.equal(""); // "" 입력 확인
+  });
+
+  it("입력 2.", () => {
+    const wrapper = shallow(<HookWrapper hook={() => <Add name="kkh" title="project"/>}/>);
+    const { hook } = wrapper.find('div').props():
+    const { name, title } = hook;
+    expect(name).to.equal("kkh");
+    expect(title).to.eqaul("project");
+  });
+
+});
+```
+
+4. Custom Hook 테스팅
+[About.spec.js]
+```
+// custom hook
+const useInput = (initValue: string) => {
+  const [value, setValue] = useInput<string>(initValue);
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const { target: { value }} = event;
+    setValue(value);
+  };
+  return {
+    value,
+    onChange
+  };
+};
+
+// HookWrapper
+const HookWrapper(props){
+  const hook = props.hook ? props.hook() | undefined;
+  return <div hook={hook}/> 
+};
+
+// Testing
+describe("Hook state useInput", () => {
+  it("useInput - 1", () => {  // 입력값이 '' 인지?
+    const wrapper = shallow(<HookWrapper hook={() => useInput("")}/>);
+    const { hook } = wrapper.find('div').props();
+    const { name } = hook;
+    expect(name).to.equal("");
+  });
+  it("useInput - 2", () => {  // 입력값이 'kkh' 인지?
+    const wrapper = shallow(<HookWrapper hook={() => useInput("kkh")}/>)  
+    const { hook } = wrapper.find('div').props();
+    const { name } = hook;
+    expect(name).to.equal("kkh");
+  });
+});
+
+```
+
+5. 렌더링 시점 컴포넌트의 값 확인하기 (before, after)
+```
+
+```
+ ## 6. ESLint [참고](https://flamingotiger.github.io/javascript/eslint-setup/#2-1-eslint-config-airbnb-%EB%A1%9C-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0)
+1. Install
+> - yarn add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
+
+- Setting
+[.eslintrc]
+```
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended"
+  ]
+}
+```
+> - parse에 @typescript-eslint/parser추가.
+> - plugins에 @typescript-eslint를 추가.
+> - 이후 규칙을 설정 "extends"(권장규칙 recommended 추가)
+[package.json]
+```
+{
+  // ...
+  "scripts": {
+    "lint": "eslint './src/**/*.{js,jsx,ts,tsx}'",
+    "lint:fix": "eslint --fix './src/**/*.{js,jsx,ts,tsx}'"
+  }
+}
+```
+> - 페키지 안에 스크립트 추가.
+> - src파일 내부의 js,jsx,ts,tsx파일을 listening하기.
+> - eslint --fix는 자동으로 lint에 맞게 수정됨.
+- typescript eslint사용 할 수 있는 최소 구성을 완료함.
+
+2. React eslint 및 Airbnb규칙 설정
+
+- airbnb설정 2가지 방법이 있음(리액트 규칙이 있는지 없는지 차이임)
+> - eslint-config-airbnb: React 관련 규칙이 들어있음
+> - eslint-config-airbnb-base: React를 제외한 규칙이 들어있음.
+- 서버와 같이 React를 사용하지 않는곳에서는 eslint-config-airbnb-base를 설치하는편이 좀더 가볍다고 함.
+
+- React관련 규칙
+> - eslint-plugin-import
+> - eslint-plugin-react
+> - eslint-plugin-react-hooks
+> - eslint-plugin-jsx-ally
+
+- eslint-config-airbnb로 설치
+> - npm info "eslint-config-airbnb@latest" peerDependencies 입력하면 설치해야 될 시트들이 나옴(각각 설치해주도록 하기)
+[npm info "eslint-config-airbnb@latest" peerDependencies]
+```
+{ eslint: '^5.16.0 || ^6.8.0',
+  'eslint-plugin-import': '^2.20.1',
+  'eslint-plugin-jsx-a11y': '^6.2.3',
+  'eslint-plugin-react': '^7.19.0',
+  'eslint-plugin-react-hooks': '^2.5.0 || ^1.7.0' }
+```
+> - yarn add -D eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react eslint-plugin-react-hooks
+> - yarn add -D eslint-plugin-{import,jsx-a11y,react,react-hooks}
+
+- 자동으로 플러그인 설정
+[.eslintrc]
+```
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "react-hooks"],
+  "extends": [
+    "airbnb-base",
+    "plugin:react/recommended"
+    "plugin:jsx-ally/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:@typescript-eslint/recommended"
+  ]
+}
+```
+
+3. Prettier eslint 설정
+- Prettier 설정을 진행.
+- prttier와 EsLint 들여쓰기 설정이 서로 중복될 수 있음.
+- 이를 해결하려면 `@typescript-eslint/indent`오류가 표시되지 않도록 지시하기.
+
+- Install
+> - yarn add -D prettier eslint-config-prettier eslint-plugin-prettier
+
+- prettier 설정 및 플러그인 설치
+> - .prettierrc파일 생성.
+[.prettierrc]
+```
+{
+  "singleQuote": true,
+  "parser": "typescript",
+  "semi": true,
+  "useTabs": true,
+  "printWidth": 120
+}
+```
+[package.json]
+```
+{
+  // ...,
+  "scripts": {
+    "prettier": "prettier --write --config ./.prettierrc './src/**.*.{ts,tsx}'"
+  }
+}
+```
+[.eslintrc]
+```
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "prettier",
+    "airbnb",
+    "airbnb/hooks",
+    "prettier/react",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ]
+}
+```
+- eslint ignore설정
+> - lint를 실행할때, 무시하고자 하는 파일 및 폴더를 설정.
+[.eslintignore]
+```
+/node_modules
+```
+- 실행하기
+> - `코드입력 → prettier → eslint → 코드수정` 순으로 실행하기.
+> - 1. yarn prettier 실행시 자동으로 코드의 스타일을 변경.
+> - 2. yarn lint 를 실행하여 규칙에 맞는지 여부를 검사.
+> - 3. eslint실행 후 나오는 오류와 경고를 해결하기.
+
+- react + typescript + prettier의 eslint설정을 완료.
+
+
+
+## Tips
+- [CTRL+SHIFT+`]터미널 추가
+- [CTRL+,]settings창
+- Type확장시키기
+```
+type People = {
+  name: string;
+  age: string;
+} 
+type Student = People & {
+  class: string;
+  grade: string;
+} 
+var student: Student = {
+  name: "",
+  age: "",
+  class: "",
+  grade: ""
+}
+```

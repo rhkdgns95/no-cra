@@ -20,7 +20,9 @@
       "suppressImplicitAnyIndexErrors": true,
       "noUnusedLocals": true,
       "rootDir": "src",
-
+  },
+  "parcelTsPluginOptions": {
+    "transpileOnly": true
   },
   "exclude": [
     "node_modules"
