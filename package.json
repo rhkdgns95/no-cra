@@ -65,6 +65,12 @@
     "lint": "eslint \"./src/**/!(*.spec).{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"./src/**/!(*.spec).{js,jsx,ts,tsx}\""
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run test:unit",
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
       "prettier",
