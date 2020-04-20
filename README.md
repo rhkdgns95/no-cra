@@ -1057,6 +1057,8 @@ M. Details
 }
 ```
 - commit 메시지 작성전에 lint-staged를 작동시키라는 의미임.
+- 작동안됨.
+- [다른 문서 참고하기](https://jbee.io/web/formatting-code-automatically/)
 
 ## Tips
 - [CTRL+SHIFT+`]터미널 추가

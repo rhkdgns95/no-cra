@@ -31,6 +31,7 @@
     "eslint-plugin-react-hooks": "^3.0.0",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.2.0",
+    "husky": "^4.2.5",
     "ignore-styles": "^5.0.1",
     "install-peerdeps": "^2.0.2",
     "jsdom": "^16.2.2",
@@ -60,14 +61,14 @@
     "build": "parcel build ./src/index.html",
     "test:unit": "mocha -r @babel/register -r ts-node/register -r ./test/dom.js -r ./test/helpers ./src/**/*.spec.*",
     "test:unit:watch": "npm run test:unit -- --watch",
-    "prettierr": "prettier --write --config ./.prettierrc './src/**/!(*.spec).{ts,tsx}'",
-    "lint": "eslint './src/**/!(*.spec).{js,jsx,ts,tsx}'",
-    "lint:fix": "eslint --fix './src/**/!(*.spec).{js,jsx,ts,tsx}'"
+    "prettier": "prettier --write --config ./.prettierrc \"./src/**/!(*.spec).{ts,tsx}\"",
+    "lint": "eslint \"./src/**/!(*.spec).{js,jsx,ts,tsx}\"",
+    "lint:fix": "eslint --fix \"./src/**/!(*.spec).{js,jsx,ts,tsx}\""
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
-      "eslint --fix",
-      "git add ."
+      "prettier",
+      "lint:fix"
     ]
   }
 }
