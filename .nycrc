@@ -1,0 +1,25 @@
+{
+  "require": [
+    "ts-node/register"
+  ],
+  "include": [
+    "src/**/*.spec.js"
+  ],
+  "extension": [
+    ".js",
+    ".tsx"
+  ],
+  "exclude": [
+    "**/*.d.ts",
+    "node_modules",
+    "dist",
+    "asserts",
+    ".cache",
+    "test"
+  ],
+  "reporter": [
+    "text-summary",
+    "html"
+  ],
+  "all": true
+}

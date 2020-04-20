@@ -9,6 +9,7 @@ interface ICounterProps {
 	setNumber: Function;
 }
 
+/* disable-eslint */
 export const Increment = (num: number): number => num + 1;
 export const Decrement = (num: number): number => num - 1;
 
@@ -46,7 +47,6 @@ const Add: React.FC<IAddProps> = ({ name, title }: IAddProps) => {
 	const myName = useInput(name);
 	const myTitle = useInput(title);
 	const [number, setNumber] = useState<number>(0);
-
 	return (
 		<div>
 			<h5>현재 값: {number}</h5>
@@ -57,15 +57,17 @@ const Add: React.FC<IAddProps> = ({ name, title }: IAddProps) => {
 	);
 };
 
-export const Counter: React.FC<ICounterProps> = ({ setNumber }: ICounterProps) => (
-	<div>
-		<button type="button" onClick={(): Function => setNumber((prevState: number) => Increment(prevState))}>
-			증가
-		</button>
-		<button type="button" onClick={(): Function => setNumber((prevState: number) => Decrement(prevState))}>
-			감소
-		</button>
-	</div>
-);
+export const Counter: React.FC<ICounterProps> = ({ setNumber }: ICounterProps) => {
+	return (
+		<div style={{ backgroundColor: 'gray' }}>
+			<button type="button" onClick={(): Function => setNumber((prevState: number) => Increment(prevState))}>
+				증가
+			</button>
+			<button type="button" onClick={(): Function => setNumber((prevState: number) => Decrement(prevState))}>
+				감소
+			</button>
+		</div>
+	);
+};
 
 export default Add;

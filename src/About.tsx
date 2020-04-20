@@ -6,10 +6,9 @@ import Add from './Components/Add/Add';
 // Unexpected any. Specify a different type.eslint@typescript-eslint/no-explicit-any
 /* eslint-disable */
 import('./msg' as any).then((module) => {
-	console.log(module.msg.hello);
+	console.log(module.default.hello);
 });
 /* eslint-enable */
-
 interface IProps {
 	name: string;
 	title: string;
@@ -25,6 +24,7 @@ const About: React.FC<IProps> = ({ name, title }: IProps) => {
 		name: appName,
 		title: appTitle,
 	};
+
 	console.log('About.tsx - firstMounted: ', firstMounted);
 	console.log('About.tsx - secondMounted: ', secondMounted);
 

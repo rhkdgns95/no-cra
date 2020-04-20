@@ -6,7 +6,7 @@
 [baretest](https://github.com/volument/baretest)
 [custom hook 테스팅 참고자료 - 1](https://github.com/flexdinesh/testing-hooks)
 [custom hook 테스팅 참고자료 - 2](https://dev.to/flexdinesh/react-hooks-test-custom-hooks-with-enzyme-40ib)
-
+[mocha react-hooks](https://rinae.dev/posts/react-testing-tutorial-kr)
 
 필수사항
 - Package Manager
@@ -349,7 +349,7 @@ parcel --https ./index.html
 ## Asset들의 번들링이 끝나고 난 뒤, 자동으로 OS에 설정된 default browser를 연다(open)
 parcel ./index.html --open
 
-## no-cache(default는 활성화 상태로 해당옵션을 사용하면, .cache폴더에 캐싱하지 않도록 설정가능)
+## no-cache(default는 활성화 상태로 해당옵션을 사용하면, .cache폴더에P 캐싱하지 않도록 설정가능)
 parcel ./index.html --no-cache
 ````
 ### 내용
@@ -658,8 +658,239 @@ describe("Hook state useInput", () => {
 
 5. 렌더링 시점 컴포넌트의 값 확인하기 (before, after)
 ```
+describe("Testing ...", () => {
+	context("Testing Case Group", () => {
+		after("", () => {
+			console.log("[5] after")
+		});
+		afterEach("", () => {
+			console.log("[4] afterEach")
+		});
+		beforeEach("", () => {
+			console.log("[2] beforeEach");
+		});
+		it("Testing1", () => {
+			console.log("[3] Job");
+		});
+		it("Testing2", () => {
+			console.log("[3-2] Job");
+		});
+		before("", () => {
+			console.log("[1] Before");
+		});
+	});
+});
+```
+> - 순서: before, beforeEach, it("Testing1"), afterEach, beforeEach, it("Testing2"), afterEach, after
+> - before, after: describe에서 맨 시작과 끝에서 동작함. 
+> - beforeEach, afterEach: context에서 여러 it가 존재한다면, it가 실행되기 전과 실행된 후에 실행.
+> - it: 테스팅의 케이스 유형 작성하는 곳
+
+6. 작업순서
+- describe블록: suit단위.
+- 1. before:  suite 단위로 초기에 실행됨.
+- 2. beforeEach:  it 실행 전(여러개의 it가 존재하는경우, 매번 it실행전에 실행됨)
+- 3. it:  테스팅 진행.
+- 4. afterEach: it실행 후(여러개의 it가 존재하는경우, 매번 it실행후에 실행됨)
+- 5. after: suit단위 마지막에 실행 됨.
+
+7. 정리
+- mount vs shallow
+> - mount()는 참조하는 컴포넌트의 하위 컴포넌트들까지 전부 포함.
+> - shallow()는 참조하는 컴포넌트만 참조하며 하위 컴포넌트는 제외 됨.
+```
+const MyApp = () => {
+	return (
+		<div>
+			<MyTitle />
+			<div className="group hello">
+				hello
+			</div>
+			<div className="group bye">
+				bye
+			</div>
+		</div>
+	)
+};
+
+const MyTitle = () => <h1 className="group">Testing</h1>
+
+describe("mount(), shallow()", () => {
+	it("shallow App", () => {
+		const wrapper = shallow(<MyApp />);
+    expect(wrapper.find('.group')).to.have.length(2); // success
+		expect(wrapper.find('h1')).to.have.length(1); // Failed -> 0
+	});
+	it("mount App", () => {
+		const wrapper = mount(<MyApp />); 
+    expect(wrapper.find('.group')).to.have.length(2); // Failed -> 3
+		expect(wrapper.find('h1')).to.have.length(1); // success
+	});
+});
+```
+> - shallow: App에서 렌더링하는 엘리먼트들 이외에, 다른 컴포넌트를 함께 렌더링한다면, 그 컴포넌트안의 내용은 확인할 수 없음(즉, 순수 App안에서 있는것만 접근 가능)
+> - mount: App에서 렌더링하는 엘리먼트들과 다른 컴포넌트들 전부를 확인할 수 있음(즉, App이 포함하는 하위 컴포넌트까지 항목에도 접근 가능)
+
+- 이벤트 테스팅
+[Add 컴포넌트의 버튼으로 값이 변경여부 파악]
+```
+describe("Add Component", () => {
+	context("이벤트 - Button Click", () => {
+
+		let addWrapper;
+		let header;
+		let btns, btnIncrement, btnDecrement;
+		before("exist", () => {
+			addWrapper = mount(<Add />);
+			header = addWrapper.find('h5');
+			btns = addWrapper.find('button');
+			btnIncrement = btns.first();   // .at(0)
+			btnDecrement = btns.last();    // /at(1) 과 같다.
+		});
+
+		it("Exist", () => {
+			expect(addWrapper).to.exist;
+			expect(header).to.exist;
+			expect(btns).to.have.length(2);
+			expect(btnIncrement).to.exist;
+			expect(btnDecrement).to.exist;
+		});
+
+		it("Increament", () => {
+			expect(header.text()).to.equal("현재 값: 0");  
+			// 3증가, result => 3
+			btnIncrement.simulate('click');
+			btnIncrement.simulate('click');
+			btnIncrement.simulate('click');
+			expect(header.text()).to.equal("현재 값: 3");
+
+			// 6증가, result => 9
+			btnIncrement.simulate('click');
+			btnIncrement.simulate('click');
+			btnIncrement.simulate('click');
+			btnIncrement.simulate('click');
+			btnIncrement.simulate('click');
+			btnIncrement.simulate('click');
+			expect(header.text()).to.equal("현재 값: 9");
+		});
+
+		it("Decrement", () => {
+			// 2 감소, result => 7
+			btnDecrement.simulate('click');
+			btnDecrement.simulate('click');
+			expect(header.text()).to.equal("현재 값: 7");
+
+			// 4 감소, result => 3
+			btnDecrement.simulate('click');
+			btnDecrement.simulate('click');
+			btnDecrement.simulate('click');
+			btnDecrement.simulate('click');
+			expect(header.text()).to.equal("현재 값: 3");
+		});
+	});
+});
+```
+
+8. Test Coverage
+- 내 테스트 코드로 내가만든 소스들을 얼마나 커버하고있는지를 확인하는 지표.
+- nyc(new york city)사용
+- yarn add -D nyc
+- touch .nycrc
+[.nycrc]
+```
+{
+  "require": [
+    "ts-node/register"
+  ],
+  "include": [
+    "src/**/*.spec.js"
+  ],
+  "extension": [
+    ".js",
+    ".tsx"
+  ],
+  "exclude": [
+    "**/*.d.ts"
+  ],
+  "reporter": [
+    "text-summary",
+    "html"
+  ],
+  "all": true
+}
+```
+- 명령작성
+> - yarn nyc mocha -r @babel/register -r ts-node/register -r 
+> - yarn nyc --reporter html mocha -r @babel/register -r ts-node/register -r ./test/*.js ./src/**/*.spec.* -w
+
+9. 비동기 처리 테스팅
+[단순한 fetch요청 response데이터 확인]
+```
+const url = "https://jsonplaceholder.typicode.com/todos/1";
+
+const valid = {
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+};
+
+describe("asynchronized", () => {
+	
+	it("async test case 1", () => {
+		Axios.get(url).then(response => {
+			const { data } = response;
+			expect(data).to.eql(valid);
+			// console.log("DATA: ", data);
+		});
+	});
+});
+```
+> - 이 방식 외에 sinon 라이브러리를 사용해서 비동기 테스팅하는 방법도 있음.
+
+10. 컴포넌트 스냅샷 테스트
+```
 
 ```
+
+N. expect() 옵션들
+> - .to.exist // 존재하는지
+> - .first()  // 첫 번째 자식
+> - .last() // 마지막 자식
+> - .at(N) // N번쨰 자식(0부터 시작함)
+> - .to.have.length(N)  // 갯수가 N개 인경우
+> - .simulate('click')  // 이벤트 '클릭' 실행
+> - .to.eql(OBJECT) // 해당 object와 일치하는지(객체의 equal 조건)
+
+M. Details
+- shallow() vs render() vs mount()
+> - shallow는 특정 컴포넌트만 렌더링하며 자손 컴포넌트는 제외.
+> - mount함수는 모든 자손 컴포넌트까지 렌더링.
+> - 이 두 가지는 비용의 차이가 중점이 될 수 있다.
+> - shallow는 단위 테스트나 얕은 수준의 통합 테스트에 적합하며,
+> - mount는 진정한 통합 테스트에 적합(통합 테스트는 특정 컴포넌트 계층에 속한 모든 자손과 로직을 가져오기 때문에 꺠지기가 더 쉽다)
+> - `따라서 통합 테스트의 유지비용은 단위 테스트보다 높음.`
+> - 그렇다면 render와 mount의 차이는?
+> - render와 mount는 트정 객체의 하위 컴포넌트까지 전부 그려낸다는 공통점이 있지만, render()는 리액트의 `라이프 사이클` 메서드를 적용하지 않고 컴포넌트를 그려내므로, 자손 컴포넌트에 접근하려면 mount()대신 render()가 더 퍼포먼스측면으로 낫다.
+> - 하지만 특정 컴포넌트의 이벤트로 인해 하위 컴포넌트가 변경되거나 혹은 하위 컴포넌트의 특정 이벤트(함수)로 상위 컴포넌트의 변화되는 결과를 확인해보기 위해서 mount()를 사용(.render로는 이벤트 동작 사용 X)
+
+- 얼마나 많은 단위테스트 vs 통합테스트 작성할지 결정할 때에는 두가지 원칙이 존재함
+> - 일반적인 테스팅 피라미드 원리에 따라서 1. 가능한 많은 단위테스트를 작성하고, 2. 어느정도의 통합 테스트를(그리고 아주 적은 수의 전체 테스트) 작성하는 것.
+> - 즉, `많은 단위 테스트를 작성하고, 중요한 부분에 통합테스트를 적용하라.`는 일반적인 테스팅 생각이다.
+> - 하지만, 리액트(혹은 비슷한 라이브러리나 프레임워크에서)의 컴포넌트를 테스트 할 때는 다른원칙이 존재함.
+> - `통합 테스트`를 많이하고 `단위 테스트`를 적게 작성하라.
+> - 컴포넌트 단위 테스트는 전체 애플리케이션과 비교하면 너무 고립되어있으며, 잘 깨질일도 거의 없음.
+> - 그래서 보통 특정부분의 맥락(context)를 완벽히 분리해서 본떠놓고(mock)단위 테스트를 수행함.
+> - 많은 사람들이 이 부분에 주제를 놓고 갑론을박함.
+> - `컴포넌트가 너무 분리되어있으니깐 테스트의 실효성이 있느냐?`
+> - 결과적으로 통합 테스트를 하면서 서로 다른 컴포넌트의 맥락이 잘 맞아 떨어지는지, 견고하게 구성되어 있는지 확인하는 테스트를 많이하게 될 것이다.
+> - 전달한 속성이 맞는지, 엘리먼트가 제대로 그려졌는지, 클릭 이벤트를 일으켜 보기도하고 지역상태가 제대로 변화되었는지 확인하게 될 것.
+
+- TDD(Test Driven Development)
+> - 테스트 주도개발
+> - 정확한 프로그래밍 목적을 디자인 단계에서 반드시 미리 정의해야만 하고 또 무엇을 미리 정의해야만 함.
+
+
  ## 6. ESLint [참고](https://flamingotiger.github.io/javascript/eslint-setup/#2-1-eslint-config-airbnb-%EB%A1%9C-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0)
 1. Install
 > - yarn add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
@@ -793,9 +1024,39 @@ describe("Hook state useInput", () => {
 > - 2. yarn lint 를 실행하여 규칙에 맞는지 여부를 검사.
 > - 3. eslint실행 후 나오는 오류와 경고를 해결하기.
 
+- eslint 실행 ignore설정
+> - eslint를 실행시 다음과 같이 eslint로 수정될 파일을 제외시킴.
+> - yarn eslint --write --config ./.prettierrc './src/**/!(*.spec).{ts,tsx}'
+> - 이것말고도 eslint를 ignore하는 방법이있음
+[.eslintrc]
+```
+{
+  "ignorePatterns": [ "**/*.d.ts", "test/*.js", "src/**/*.spec.*" ]
+}
+```
+
 - react + typescript + prettier의 eslint설정을 완료.
 
-
+4. lint-staged사용[참고](https://www.huskyhoochu.com/how-to-use-lint-staged/)
+- Install
+> - yarn add -D lint-staged
+- 설정
+[package.json]
+```
+{
+// ...,
+  "scripts": {
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [  // lint-staged가 찾는 파일의 범위.
+      "eslint --fix",
+      "git add ."
+    ]
+  }
+}
+```
+- commit 메시지 작성전에 lint-staged를 작동시키라는 의미임.
 
 ## Tips
 - [CTRL+SHIFT+`]터미널 추가
