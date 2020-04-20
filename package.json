@@ -54,7 +54,6 @@
     "react-dom": "^16.13.1"
   },
   "scripts": {
-    "precommit": "lint-staged",
     "test": "mocha",
     "test:nyc": "nyc mocha -r @babel/register -r ts-node/register -r ./test/dom.js -r ./test/helpers ./src/**/*.spec.*",
     "start": "parcel -p 3000 ./src/index.html --open",

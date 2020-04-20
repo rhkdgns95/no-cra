@@ -1059,6 +1059,25 @@ M. Details
 - commit 메시지 작성전에 lint-staged를 작동시키라는 의미임.
 - 작동안됨.
 - [다른 문서 참고하기](https://jbee.io/web/formatting-code-automatically/)
+- husky 설치
+> - yarn add husky -D
+[package.json]
+```
+{
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run test:unit",
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {  // 전체 파일이 아니라 git stage에 있는 업데이트된(git add .으로) 파일들만 가져와서 prettier/lint 검사를 실행하므로 시간이 절약됨.
+    "src/**/*.{ts,tsx}": [  
+      "npm run prettier", // "scripts"에 있는 명령어 실행시키기
+      "npm run lint:fix"
+    ]
+  }
+}
+```
 
 ## Tips
 - [CTRL+SHIFT+`]터미널 추가
