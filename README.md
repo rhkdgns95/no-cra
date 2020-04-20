@@ -1041,11 +1041,11 @@ M. Details
 - Install
 > - yarn add -D lint-staged
 - 설정
-[package.json]
+[package.json] - (잘못된 소스) 
 ```
 {
 // ...,
-  "scripts": {
+  "scripts": {  // X 밑에 소스파일에서 삭제됨.
     "precommit": "lint-staged"
   },
   "lint-staged": {
@@ -1078,6 +1078,13 @@ M. Details
   }
 }
 ```
+- commit할때마다 전체 프로젝트 파일대상을 lint 검사를하면, 시간이 굉장히 오래걸리는 문제가 발생.
+- commit을 하기전, 변경사항에 대해서만 lint를 검사하면 됨.
+- 이때, lint-staged라는 npm라이브러리를 통해서 stage단계에 있는 사항에 대해서만 특정 task를 실행 시킬 수 있음.
+- lint-staged에 있는 작업이 하나라도 실패한다면, 다시 실행전으로 돌아옴.
+- 즉, lint나 prettier를 빼먹고 커밋하지 않은경우의 파일을 강제하도록 함.
+- commit전에는 변경사항에 대해서 lint를 확인하고, push전에는 단위 테스트를 실행시키도록 Git Hooks 설정완료.
+- 이제, Pull Request단계에서 세미콜론이나 다른 코드 실수를 하지 않도록 방지하며, 다른 협업자와 소스코드 스타일을 맞추어 시간을 절약함.
 
 ## Tips
 - [CTRL+SHIFT+`]터미널 추가
