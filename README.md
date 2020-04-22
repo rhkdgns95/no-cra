@@ -1,12 +1,12 @@
 # No CRA React
-[parcel 참고자료](https://velog.io/@yesdoing/%EB%82%B4%EB%A7%98%EB%8C%80%EB%A1%9C-%EB%A6%AC%EC%95%A1%ED%8A%B8-A-to-Z-1-9pjwz1o6ai#getting-started)
-[mocha](https://mochajs.org/)
-[mocha, chai, enz.... 참고자료 - 1](https://rinae.dev/posts/react-testing-tutorial-kr)
-[mocha, chai, enz.... 참고자료 - 2](https://www.robinwieruch.de/react-testing-tutorial/)
-[baretest](https://github.com/volument/baretest)
-[custom hook 테스팅 참고자료 - 1](https://github.com/flexdinesh/testing-hooks)
-[custom hook 테스팅 참고자료 - 2](https://dev.to/flexdinesh/react-hooks-test-custom-hooks-with-enzyme-40ib)
-[mocha react-hooks](https://rinae.dev/posts/react-testing-tutorial-kr)
+- [parcel 참고자료](https://velog.io/@yesdoing/%EB%82%B4%EB%A7%98%EB%8C%80%EB%A1%9C-%EB%A6%AC%EC%95%A1%ED%8A%B8-A-to-Z-1-9pjwz1o6ai#getting-started)
+- [mocha](https://mochajs.org/)
+- [mocha, chai, enz.... 참고자료 - 1](https://rinae.dev/posts/react-testing-tutorial-kr)
+- [mocha, chai, enz.... 참고자료 - 2](https://www.robinwieruch.de/react-testing-tutorial/)
+- [baretest](https://github.com/volument/baretest)
+- [custom hook 테스팅 참고자료 - 1](https://github.com/flexdinesh/testing-hooks)
+- [custom hook 테스팅 참고자료 - 2](https://dev.to/flexdinesh/react-hooks-test-custom-hooks-with-enzyme-40ib)
+- [mocha react-hooks](https://rinae.dev/posts/react-testing-tutorial-kr)
 
 필수사항
 - Package Manager
@@ -17,8 +17,21 @@
 - Lint
 - Live Dev Server
 
+## Todo
+1. React 환경구성 (webpack) part 1
+2. React 환경구성 (webpack) part 2
+3. React 환경구성 (parcel)
+4. Study 
+5. Test (Mocha, Chai)
+6. ESLint/Prettier
+7. loadable components
+
 
 ## 1. CRA없이 React환경 구성 (webpack 사용)
+
+<details>
+<summary>내용 확인/숨기기</summary>
+<div markdown="1">
 
 ### JOB
 1. mkdir src public
@@ -30,6 +43,7 @@
   "build" : "webpack --mode production"
 }
 ```
+
 5. Webpack구성 - webpack.config.js파일 생성 후 추가작업설정
 [webpack.config.js]
 ```
@@ -49,6 +63,7 @@ module.exports = {
   }
 }
 ```
+
 - entry: 파일들을 묶기위해 Webpack이 바라보는 파일 시작점.
 - output: bundle된 파일의 결과물을 위한 설정.
 - mode: production or development.
@@ -116,6 +131,7 @@ module.exports = {
   ]
 }
 ```
+
 - HTML 작업내용
 html-webpack-plugin: Webpack이 실행될 때, public파일에 설정한 html파일을 기준으로 결과물을 만들어 줌.
 clean-webpack-plugin: Webpack이 실행될 때 이전에 나온 결과물을 제거함(최신 결과물 만을 유지하기 위해서)
@@ -220,7 +236,14 @@ module.exports = {
 15. Bug
 - yarn add -D node-sass를 설치해야 스타일 적용이 완료됨.
 
+</div>
+</details>
+
 ## 2. CRA없이 React환경 구성 (webpack 사용 + Typescript 적용)
+
+<details>
+<summary>내용 확인/숨기기</summary>
+<div markdown="2">
 
 ### JOB
 1. Typescript 설치
@@ -257,7 +280,14 @@ module.exports = {
   }
 }
 ```
+</div>
+</details>
+
 ## 3. CRA없이 React환경 구성 (webpack 사용 X, Parcel 사용)
+
+<details>
+<summary>내용 확인/숨기기</summary>
+<div markdown="1">
 
 ### Install + Settings
 > yarn add parcel-bundler 설치
@@ -332,9 +362,15 @@ import ('./msg')
 // 위와같이 함수를 사용하면 파일이 분할됨.
 // main.js의 번들과 msg.js의 번들
 ```
-
+</div>
+</details>
 
 ## 4. Study
+
+<details>
+<summary>내용 확인/숨기기</summary>
+<div markdown="1">
+
 ### parcel CMD [참고](https://trustyoo86.github.io/parcel/2018/02/19/parcel-command.html)
 ````
 ## 3000번 포트로 시작(default: 1234)
@@ -361,7 +397,15 @@ parcel ./index.html --no-cache
 - public 이미지 적용
 > 이전과 같이 public image는 /로 호출하는게 아니라, 해당 컴포넌트의 상대 Path로 불러와서 import 하도록 하면 됨.
 
+</div>
+</details>
+
 ## 5. Test
+
+<details>
+<summary>내용 확인/숨기기</summary>
+<div markdown="1">
+
 - [참고](https://rinae.dev/posts/react-testing-tutorial-kr)
 
 ### Install
@@ -695,6 +739,8 @@ describe("Testing ...", () => {
 - 5. after: suit단위 마지막에 실행 됨.
 
 7. 정리
+- shallow
+> - shallow는 컴포넌트를 얕은 wrapper로써, 해당 컴포넌트의 children에 해당하는 즉, 렌더링 되는 컴포넌트들만 접근이 가능하여서 해당 컴포넌트의 props값을 알고싶다면? 임의의 상위 컴포넌트(HookWrapper)의 props값에 해당 컴포넌트를 렌더링 시키면 됨.
 - mount vs shallow
 > - mount()는 참조하는 컴포넌트의 하위 컴포넌트들까지 전부 포함.
 > - shallow()는 참조하는 컴포넌트만 참조하며 하위 컴포넌트는 제외 됨.
@@ -890,8 +936,15 @@ M. Details
 > - 테스트 주도개발
 > - 정확한 프로그래밍 목적을 디자인 단계에서 반드시 미리 정의해야만 하고 또 무엇을 미리 정의해야만 함.
 
+</div>
+</details>
 
  ## 6. ESLint [참고](https://flamingotiger.github.io/javascript/eslint-setup/#2-1-eslint-config-airbnb-%EB%A1%9C-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0)
+
+<details>
+<summary>내용 확인/숨기기</summary>
+<div markdown="1">
+
 1. Install
 > - yarn add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
 
@@ -1085,6 +1138,40 @@ M. Details
 - 즉, lint나 prettier를 빼먹고 커밋하지 않은경우의 파일을 강제하도록 함.
 - commit전에는 변경사항에 대해서 lint를 확인하고, push전에는 단위 테스트를 실행시키도록 Git Hooks 설정완료.
 - 이제, Pull Request단계에서 세미콜론이나 다른 코드 실수를 하지 않도록 방지하며, 다른 협업자와 소스코드 스타일을 맞추어 시간을 절약함.
+
+</div>
+</details>
+
+## 7. loadable components -> X (only webpack)
+
+<details>
+<summary>내용 확인/숨기기</summary>
+<div markdown="1">
+
+[Examples Dynamic import](https://medium.com/@ohsiwon/code-splitting-with-dynamic-import-test-and-learn-28bc2a06d1b8)
+[loadable git](https://github.com/gregberge/loadable-components)
+[loadable components](https://loadable-components.com/docs/loadable-vs-react-lazy/)
+
+0. [React 공식문서](https://ko.reactjs.org/docs/code-splitting.html)
+- React.lazy함수는 동적 import를 사용해서 컴포넌트 렌더링이 가능.
+- React.lazy와 Suspense는 아직 서버 사이드 렌더링을 할 수 없으며, 서버에서 렌더링된 앱에서 코드분할을 원한다면, [Loadable Components](https://github.com/gregberge/loadable-components)를 추천.
+- 이는 서버사이드 렌더링과 번들 스플리팅에 대한 좋은 가이드.
+
+1. loadable
+- React.layzy는 코드 분할에 권장되는 솔루션임.
+- 하지만, 제한이 되거나 SSR이 필요한경우 loadable Component를 사용.
+
+2. Install
+- yarn add @loadable/component
+
+
+</div>
+</details>
+
+## 8. [react-imported-component](https://github.com/theKashey/react-imported-component)
+- babel using 
+
+
 
 ## Tips
 - [CTRL+SHIFT+`]터미널 추가

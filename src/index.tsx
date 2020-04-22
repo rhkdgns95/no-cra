@@ -1,6 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import About from './About';
 import './index.css';
+import App from './App';
+import Layout from './Components/Layout';
 
-ReactDOM.render(<About name="About_name" title="About_title" />, document.getElementById('root'));
+ReactDOM.render(
+	<Layout>
+		<App />
+	</Layout>,
+	document.getElementById('root')
+);

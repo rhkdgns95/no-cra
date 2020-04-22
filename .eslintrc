@@ -1,4 +1,11 @@
 {
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".css"]
+      }
+    }
+  },
   "parser": "@typescript-eslint/parser",
   "globals": {
     "window": true,
@@ -29,12 +36,5 @@
         "json": "never"
       }
     ]
-  },
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx", ".css"]
-      }
-    }
   }
 }
