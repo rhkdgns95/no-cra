@@ -1142,7 +1142,9 @@ M. Details
 </div>
 </details>
 
-## 7. loadable components -> X (only webpack)
+## 7. loadable components -> X (only webpack) -> https://velopert.com/3425
+
+[SEO설명](https://medium.com/@prestonwallace/3-ways-improve-react-seo-without-isomorphic-app-a6354595e400)
 
 <details>
 <summary>내용 확인/숨기기</summary>

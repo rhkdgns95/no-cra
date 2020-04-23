@@ -2,11 +2,11 @@
   "compilerOptions": {
     "allowJs": true,  // js파일도 컴파일 대상이라는 것(자바스크립트 파일 컴파일 허용 여부)
     "allowSyntheticDefaultImports": true, // 도달 불가능한 코드에 대한 허용 여부. 
-    "baseUrl": ".", // 모듈을 불러올때, 기준이 됨.
+    "rootDir": "src", // 컴파일할 대상들이 들어있는 폴더(루트 폴더) -> 즉, 이 폴더안에서 작업을 해야함 - outDir옵션을 사용할때만 사용
+    "baseUrl": "*", // 모듈을 불러올때, 기준이 됨.
     "paths": {
-      "src/**/*.*": ["*"]
+      "*": ["src/*", "node_modules/*"],
     },
-    "rootDir": ".", // 컴파일할 대상들이 들어있는 폴더(루트 폴더) -> 즉, 이 폴더안에서 작업을 해야함 - outDir옵션을 사용할때만 사용
     "outDir": "./dist/",  // 빌드 결과물 폴더(parcel에서 따로 option을 통해서 생성)
     "module": "commonjs", // 빌드 결과의 모듈방식은 commonjs로 한다는 것.
     "target": "ES5",  // 빌드 결과물은 es5 방식으로 한다는 것.
@@ -23,9 +23,9 @@
     "moduleResolution": "node", // 모듈 (검색)해석방식은 node처럼 한다는 것.
     "resolveJsonModule": true,
     "noEmit": true, // 결과파일을 저장하지 않음
-    "noImplicitReturns": false,  // 함수의 모든 경로가 값을 반환하지 않으면 에러가 발생.
+    "noImplicitReturns": true,  // 함수의 모든 경로가 값을 반환하지 않으면 에러가 발생.
     "noImplicitThis": true, // this 타입을 명시적으로 지정하지 않으면 에러가 발생.
-    "noImplicitAny": false,  // any타입 금지.
+    "noImplicitAny": true,  // any타입 금지.
     "noStrictGenericChecks": true,  // 함수타입에서 제네릭 시그니처의 엄격한 검사.
     "noUnusedLocals": true, // 사용안된 지역변수에 대한 오류 보고서.
     "strictNullChecks": true, //

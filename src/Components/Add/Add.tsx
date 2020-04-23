@@ -27,7 +27,10 @@ export const useMounted = (initValue: boolean): { mount: boolean } => {
 
 export const useInput = (
 	initValue: string
-): { value: string; onChange: (event: React.ChangeEvent<HTMLInputElement>) => void } => {
+): {
+	value: string;
+	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+} => {
 	const [value, setValue] = useState<string>(initValue);
 
 	const onChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -57,13 +60,25 @@ const Add: React.FC<IAddProps> = ({ name, title }: IAddProps) => {
 	);
 };
 
-export const Counter: React.FC<ICounterProps> = ({ setNumber }: ICounterProps) => {
+export const Counter: React.FC<ICounterProps> = ({
+	setNumber,
+}: ICounterProps) => {
 	return (
 		<div style={{ backgroundColor: 'gray' }}>
-			<button type="button" onClick={(): Function => setNumber((prevState: number) => Increment(prevState))}>
+			<button
+				type="button"
+				onClick={(): Function =>
+					setNumber((prevState: number) => Increment(prevState))
+				}
+			>
 				증가
 			</button>
-			<button type="button" onClick={(): Function => setNumber((prevState: number) => Decrement(prevState))}>
+			<button
+				type="button"
+				onClick={(): Function =>
+					setNumber((prevState: number) => Decrement(prevState))
+				}
+			>
 				감소
 			</button>
 		</div>

@@ -17,10 +17,6 @@ const navigations: Array<INavbar> = [
 		path: '/intro',
 	},
 	{
-		name: 'Product',
-		path: '/product',
-	},
-	{
 		name: 'Contact',
 		path: '/contact',
 	},
@@ -31,7 +27,10 @@ const NavBar = () => {
 	return (
 		<div>
 			{navigations.map((item, key) => (
-				<span key={key} style={path === item.path ? { color: 'red' } : { color: 'black' }}>
+				<span
+					key={key}
+					style={path === item.path ? { color: 'red' } : { color: 'black' }}
+				>
 					<Link to={item.path}>{item.name}</Link>
 				</span>
 			))}

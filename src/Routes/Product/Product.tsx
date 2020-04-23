@@ -1,17 +1,9 @@
-import React, { useEffect } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { useLayoutContext } from '../../Components/Layout/LayoutProvider';
+import React from 'react';
 
-/* eslint-disable */
-const Product: React.FC<RouteComponentProps> = ({ match: { path } }) => {
-	const { handleChangePath } = useLayoutContext();
-
-	useEffect(() => {
-		handleChangePath(path);
-	}, []);
+const Product: React.FC<void> = () => {
 	return (
 		<div>
-			<h1>Product</h1>
+			<h1>Async - Product</h1>
 		</div>
 	);
 };

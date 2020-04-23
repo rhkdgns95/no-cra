@@ -23,9 +23,12 @@
   ],
   "rules": {
     "@typescript-eslint/interface-name-prefix": 0, // 제거될 규칙임. 참고(https://github.com/typescript-eslint/typescript-eslint/blob/v2.28.0/packages/eslint-plugin/docs/rules/interface-name-prefix.md),
-    "no-console": 0, // 점검할땐 2로 변경할것.
-    "react/jsx-filename-extension": [2, { "extensions": [".tsx", ".jsx"] }],
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "no-console": 1, // 점검할땐 2로 변경할것.
+    "no-unused-vars": 0,
+    "react/prop-types": 0, // props의 경우 tsconfig의 옵션으로 설정.
     "react/jsx-props-no-spreading": 0,
+    "react/jsx-filename-extension": [2, { "extensions": [".tsx", ".jsx"] }],
     "import/extensions": [
       "error",
       "ignorePackages", {

@@ -1,16 +1,27 @@
-import React, { useEffect } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { useLayoutContext } from '../../Components/Layout/LayoutProvider';
+import React from 'react';
+import { Helmet } from 'react-helmet';
 
-/* eslint-disable */
-const Intro: React.FC<RouteComponentProps> = ({ match: { path } }) => {
-	const { handleChangePath } = useLayoutContext();
-	useEffect(() => {
-		handleChangePath(path);
-	}, []);
+const Intro: React.FC = () => {
 	return (
 		<div>
-			<h1>Intro</h1>
+			<Helmet>
+				<title>Intro</title>
+				<link
+					rel="stylesheet"
+					href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.18.1/antd.css"
+				/>
+				<link
+					href="https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap"
+					rel="stylesheet"
+				/>
+				<meta name="description" content="Helmet Intro application" />
+				<style>{`
+		* { 
+			font-size: 22px;
+		}
+	`}</style>
+			</Helmet>
+			<h1>Intro Styles</h1>
 		</div>
 	);
 };

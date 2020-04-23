@@ -33,7 +33,9 @@ const useFetch = (): { value: IContext } => {
 };
 
 const LayoutProvider: React.FC = ({ children }) => {
-	return <LayoutContext.Provider {...useFetch()}>{children}</LayoutContext.Provider>;
+	return (
+		<LayoutContext.Provider {...useFetch()}>{children}</LayoutContext.Provider>
+	);
 };
 
 export { useLayoutContext };
